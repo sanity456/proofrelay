@@ -1,0 +1,47 @@
+{
+  "schema": "proofrelay-v3-qa-v1",
+  "network": "GenLayer StudioNet",
+  "chain_id": 61999,
+  "contract_address": "0x675438CAbCaAb37e5289c660deC35a1DD329b832",
+  "criteria_version": "proofrelay-scope-3",
+  "criteria_hash": "d5a0dc03cd3b2c1fdbc2f33745346f848422ec36fd8c874e2882e08c8e7363ca",
+  "publisher": "0x7Cef5DBbD598ba74EF9C665c9853E573448d97D0",
+  "transactions": {
+    "deployment": "0xd2594e44c8fea2ba384af1ead7b1d1bbe2e799c7588f2178bb521e337dbba8a1",
+    "honest_record": "0x4d26ea9392f8a5f65aef7f726af77fba55e1ccf7bc4cec64f1a5e127cfe7ea6a",
+    "adversarial_rejection": "0xd5c620d0f3ac1325c0c20d2bd2cfdc6405578bffb1c81367e65736b3de2b93b6",
+    "preserving_proposal": "0x0fda6e0c0943acf08309581b57c110ed8e394d264a9e43c6a661cb0d18cb62ab",
+    "preserving_adoption": "0x0483fef042ca064fe4352a88f21d966fc0fb688fb0ed971a81187b77ba8c7144",
+    "scope_change_proposal": "0xf473ac4e3174c8edb907264469e7aba4bfabc4274390fe963f72e2a3bb90b4ca"
+  },
+  "expected_state": {
+    "record_ids": ["R1"],
+    "claim": "Apollo 11 landed in the Sea of Tranquility.",
+    "original_revision": "1380958329",
+    "original_quote": "landing in the Sea of Tranquility",
+    "current_revision": "1380944587",
+    "current_quote": "landing in the Sea of Tranquility",
+    "current_proposal": "P1",
+    "proposals": [
+      {
+        "id": "P1",
+        "candidate_revision": "1380944587",
+        "candidate_quote": "landing in the Sea of Tranquility",
+        "outcome": "PRESERVES_SCOPE",
+        "adopted": true
+      },
+      {
+        "id": "P2",
+        "candidate_revision": "1380944209",
+        "candidate_quote": "first landed [[human]]s on the [[Moon]]",
+        "outcome": "CHANGES_SCOPE",
+        "adopted": false
+      }
+    ]
+  },
+  "limitations": [
+    "The adversarial rejection covers one concrete instruction attack, not all possible prompt injections.",
+    "Wikipedia lead text and validator agreement do not establish objective truth or source independence.",
+    "This QA deployment is not a public product release."
+  ]
+}
