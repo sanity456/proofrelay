@@ -1,5 +1,3 @@
-import { createClient } from 'genlayer-js';
-import { studionet } from 'genlayer-js/chains';
 import probeSource from '../../../contracts/source_probe.py?raw';
 import productSource from '../../../contracts/proofrelay.py?raw';
 import deployment from '../../../deployment.json';
@@ -14,6 +12,17 @@ const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
 const PROBE_ADDRESS_KEY = 'proofrelay:studionet:probe';
 const PRODUCT_ADDRESS_KEY = 'proofrelay:studionet:product';
 const PENDING_KEY = 'proofrelay:studionet:pending';
+let sdkPromise;
+
+async function loadSdk() {
+  if (!sdkPromise) {
+    sdkPromise = Promise.all([
+      import('genlayer-js'),
+      import('genlayer-js/chains'),
+    ]).then(([sdk, chains]) => ({ createClient: sdk.createClient, studionet: chains.studionet }));
+  }
+  return sdkPromise;
+}
 
 export function validAddress(value) { return ADDRESS_RE.test(value || '') && !/^0x0{40}$/i.test(value); }
 export function short(value) { return value ? `${value.slice(0, 7)}…${value.slice(-5)}` : '—'; }
@@ -45,6 +54,7 @@ export function forgetPending() { localStorage.removeItem(PENDING_KEY); }
 export function provider() { return window.ethereum || null; }
 
 export async function ensureStudionet(wallet) {
+  const { studionet } = await loadSdk();
   const chainHex = `0x${CHAIN_ID.toString(16)}`;
   const current = await wallet.request({ method: 'eth_chainId' });
   if (Number.parseInt(current, 16) === CHAIN_ID) return;
@@ -72,21 +82,22 @@ export async function requestWallet() {
   return account;
 }
 
-export function client(account) {
+export async function client(account) {
+  const { createClient, studionet } = await loadSdk();
   const wallet = provider();
   return createClient({ chain: studionet, ...(account ? { account, provider: wallet } : {}) });
 }
 
 export async function deployProbe(account) {
-  return client(account).deployContract({ code: PROBE_SOURCE, args: [] });
+  return (await client(account)).deployContract({ code: PROBE_SOURCE, args: [] });
 }
 
 export async function deployProduct(account) {
-  return client(account).deployContract({ code: PRODUCT_SOURCE, args: [] });
+  return (await client(account)).deployContract({ code: PRODUCT_SOURCE, args: [] });
 }
 
 export async function inspect(address, revision, quote, account) {
-  return client(account).writeContract({
+  return (await client(account)).writeContract({
     address,
     functionName: 'inspect_wikipedia_snapshot',
     args: [revision, quote],
@@ -95,7 +106,7 @@ export async function inspect(address, revision, quote, account) {
 }
 
 export async function createRecord(address, claim, revision, quote, account) {
-  return client(account).writeContract({
+  return (await client(account)).writeContract({
     address,
     functionName: 'create_record',
     args: [claim, revision, quote],
@@ -104,7 +115,7 @@ export async function createRecord(address, claim, revision, quote, account) {
 }
 
 export async function proposeCorrection(address, recordId, revision, quote, account) {
-  return client(account).writeContract({
+  return (await client(account)).writeContract({
     address,
     functionName: 'propose_correction',
     args: [recordId, revision, quote],
@@ -113,7 +124,7 @@ export async function proposeCorrection(address, recordId, revision, quote, acco
 }
 
 export async function adoptCorrection(address, proposalId, account) {
-  return client(account).writeContract({
+  return (await client(account)).writeContract({
     address,
     functionName: 'adopt_correction',
     args: [proposalId],
@@ -123,7 +134,7 @@ export async function adoptCorrection(address, proposalId, account) {
 
 export async function read(address, functionName, args = []) {
   if (!validAddress(address)) throw new Error('Deploy the source probe first.');
-  return client().readContract({ address, functionName, args });
+  return (await client()).readContract({ address, functionName, args });
 }
 
 export function successfulReceipt(receipt) {
@@ -139,7 +150,7 @@ export function successfulReceipt(receipt) {
 export async function waitForFinality(hash) {
   // Receipt polling is read-only; it must not bind the lookup to whichever
   // MetaMask account happens to be selected now, which may differ from sender.
-  const receipt = await client()
+  const receipt = await (await client())
     .waitForTransactionReceipt({ hash, status: 'FINALIZED', interval: 5000, retries: 120 });
   if (!successfulReceipt(receipt)) throw new Error('This transaction did not finalize successfully. Check its explorer entry.');
   return receipt;
