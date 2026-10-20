@@ -42,6 +42,6 @@
   "limitations": [
     "The adversarial rejection covers one concrete instruction attack, not all possible prompt injections.",
     "Wikipedia lead text and validator agreement do not establish objective truth or source independence.",
-    "This QA deployment is not a public product release."
+    "This is a public StudioNet demonstration, not a production or financial product."
   ]
 }
