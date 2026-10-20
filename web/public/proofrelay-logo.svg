@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 136" role="img" aria-labelledby="title desc">
+  <title id="title">ProofRelay</title>
+  <desc id="desc">Two source paths converge on a checked result, beside the ProofRelay wordmark.</desc>
+  <rect x="8" y="8" width="120" height="120" rx="31" fill="#B9ED63"/>
+  <g fill="none" stroke="#122017" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
+    <path d="M37 42h13c11 0 12 22 25 22h5M37 94h13c11 0 12-22 25-22h5"/>
+  </g>
+  <g fill="#122017">
+    <circle cx="34" cy="42" r="5"/>
+    <circle cx="34" cy="94" r="5"/>
+    <circle cx="76" cy="68" r="5"/>
+    <circle cx="99" cy="68" r="22"/>
+  </g>
+  <path d="m89 68 7 7 14-16" fill="none" stroke="#B9ED63" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
+  <text x="151" y="91" font-family="Manrope, Inter, Arial, sans-serif" font-size="58" font-weight="800" letter-spacing="-3.2" fill="#F4F6EF">proof<tspan fill="#B9ED63">relay</tspan></text>
+</svg>

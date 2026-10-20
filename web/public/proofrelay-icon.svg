@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">ProofRelay</title>
+  <rect x="4" y="4" width="120" height="120" rx="31" fill="#B9ED63"/>
+  <g fill="none" stroke="#122017" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
+    <path d="M33 38h13c11 0 12 22 25 22h5M33 90h13c11 0 12-22 25-22h5"/>
+  </g>
+  <g fill="#122017">
+    <circle cx="30" cy="38" r="5"/>
+    <circle cx="30" cy="90" r="5"/>
+    <circle cx="72" cy="64" r="5"/>
+    <circle cx="95" cy="64" r="22"/>
+  </g>
+  <path d="m85 64 7 7 14-16" fill="none" stroke="#B9ED63" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
+</svg>
