@@ -1,0 +1,55 @@
+{
+  "schema": "proofrelay-v5-qa-v1",
+  "network": "GenLayer StudioNet",
+  "chain_id": 61999,
+  "probe_address": "0x6aaDc78aFa8E801044c2F6cE8C9c22aEcA31c896",
+  "contract_address": "0xc5D1552D153015Bc75a6818d0642823d6179e1c0",
+  "criteria_version": "proofrelay-scope-5",
+  "criteria_hash": "3878892bb986593d108952ae997ef4702e35fd19fab83751d18911b8b3bbba43",
+  "publisher": "0x7Cef5DBbD598ba74EF9C665c9853E573448d97D0",
+  "challenger": "0x29B8b7D7CBF534Eba01E56919dE19d79d1509360",
+  "transactions": {
+    "probe_deployment": "0x14d12127d27038ff1f3e5ac22c06b9a4845a38c1799297b7a75399ea3b8604ac",
+    "probe_check": "0x4fa28e7540947dafc7227440b59e2d50d6067ed73dd7da7092812cbfdb66fbbe",
+    "product_deployment": "0x70ae5c36c5b71362929a7b4562090179483e6709b1ef733d792f1faca545ed55",
+    "record": "0xe57a3b1522217bbb6229257112d3faa293c0cd181e1ffec4c2faa3223e320bf3",
+    "challenge": "0x49b1cc7b2c69f10086f8a4a3a7ef4b793886b7984d3e1e0dbd6c64574c7f77bb",
+    "preserving_proposal": "0xa5698a0855dd3bf0e7daa35850d043e559a6c8cdd9ad70a62a72f19d7f55b246",
+    "preserving_adoption": "0x2408b798a6301e1949929c596c4c525e0a1d8ea3e94f78f2e7e7ce89a885e5e6"
+  },
+  "expected_probe": {
+    "revision_id": "1380958329",
+    "quote": "landing in the Sea of Tranquility",
+    "result": "MATCH"
+  },
+  "expected_state": {
+    "record_ids": ["R1"],
+    "claim": "Apollo 11 landed in the Sea of Tranquility.",
+    "original_revision": "1380958329",
+    "original_quote": "landing in the Sea of Tranquility",
+    "original_outcome": "SUPPORTED",
+    "current_revision": "1380944587",
+    "current_quote": "landing in the Sea of Tranquility",
+    "current_outcome": "PRESERVES_SCOPE",
+    "current_proposal": "P1",
+    "proposal": {
+      "id": "P1",
+      "base_revision": "1380958329",
+      "candidate_revision": "1380944587",
+      "candidate_quote": "landing in the Sea of Tranquility",
+      "outcome": "PRESERVES_SCOPE",
+      "adopted": true
+    },
+    "challenge": {
+      "id": "C1",
+      "source_revision": "1380944587",
+      "source_quote": "landing in the Sea of Tranquility",
+      "outcome": "INSUFFICIENT_EVIDENCE"
+    }
+  },
+  "limitations": [
+    "The public challenge uses another revision of the same Wikipedia source and does not prove publisher or source independence.",
+    "Consensus outcomes describe support under the fixed policy, not objective historical truth.",
+    "This is a public StudioNet demonstration; test GEN has no monetary value."
+  ]
+}

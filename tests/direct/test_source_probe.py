@@ -4,11 +4,11 @@ import json
 CONTRACT = "contracts/source_probe.py"
 REVISION = "1380958329"
 QUOTE = "landing in the Sea of Tranquility"
-URL = rf"https://en\.wikipedia\.org/w/api\.php\?action=parse&oldid={REVISION}.*"
+URL = rf"https://en\.wikipedia\.org/w/rest\.php/v1/revision/{REVISION}"
 
 
 def mock_revision(vm, *, revision=REVISION, text=QUOTE, status=200):
-    payload = {"parse": {"revid": int(revision), "wikitext": {"*": text}}}
+    payload = {"id": int(revision), "source": text + "\n== References ==\nignored"}
     vm.clear_mocks()
     vm.mock_web(URL, {"status": status, "body": json.dumps(payload)})
 
@@ -30,6 +30,16 @@ def test_probe_distinguishes_missing_quote(direct_vm, direct_deploy, direct_alic
     direct_vm.sender = direct_alice
     contract = direct_deploy(CONTRACT)
     mock_revision(direct_vm, text="An unrelated introduction.")
+
+    assert contract.inspect_wikipedia_snapshot(REVISION, QUOTE) == "TEXT_MISSING"
+
+
+def test_probe_ignores_quote_outside_lead(direct_vm, direct_deploy, direct_alice):
+    direct_vm.sender = direct_alice
+    contract = direct_deploy(CONTRACT)
+    payload = {"id": int(REVISION), "source": "Lead text.\n== History ==\n" + QUOTE}
+    direct_vm.clear_mocks()
+    direct_vm.mock_web(URL, {"status": 200, "body": json.dumps(payload)})
 
     assert contract.inspect_wikipedia_snapshot(REVISION, QUOTE) == "TEXT_MISSING"
 

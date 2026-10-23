@@ -9,7 +9,8 @@
     "build": "vite build",
     "test:direct": "pytest tests/direct -q",
     "verify:proof": "node scripts/verify-proof.js",
-    "verify:v3-qa": "node scripts/verify-v3-qa.js"
+    "verify:v3-qa": "node scripts/verify-v3-qa.js",
+    "verify:v5-qa": "node scripts/verify-v5-qa.js"
   },
   "dependencies": {
     "genlayer-js": "1.1.8",

@@ -4,13 +4,13 @@ import deployment from '../../../deployment.json';
 
 export const CHAIN_ID = 61999;
 export const EXPLORER = 'https://explorer-studio.genlayer.com';
-export const PRODUCT_CRITERIA_VERSION = 'proofrelay-scope-3';
-export const PRODUCT_CRITERIA_HASH = 'd5a0dc03cd3b2c1fdbc2f33745346f848422ec36fd8c874e2882e08c8e7363ca';
+export const PRODUCT_CRITERIA_VERSION = 'proofrelay-scope-5';
+export const PRODUCT_CRITERIA_HASH = '3878892bb986593d108952ae997ef4702e35fd19fab83751d18911b8b3bbba43';
 export const PROBE_SOURCE = probeSource;
 export const PRODUCT_SOURCE = productSource;
 const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
-const PROBE_ADDRESS_KEY = 'proofrelay:studionet:probe';
-const PRODUCT_ADDRESS_KEY = 'proofrelay:studionet:product';
+const PROBE_ADDRESS_KEY = 'proofrelay:studionet:probe-v2';
+const PRODUCT_ADDRESS_KEY = 'proofrelay:studionet:product-v5';
 const PENDING_KEY = 'proofrelay:studionet:pending';
 let sdkPromise;
 
@@ -27,16 +27,20 @@ async function loadSdk() {
 export function validAddress(value) { return ADDRESS_RE.test(value || '') && !/^0x0{40}$/i.test(value); }
 export function short(value) { return value ? `${value.slice(0, 7)}…${value.slice(-5)}` : '—'; }
 export function configuredProbeAddress() {
-  const fromBuild = import.meta.env.VITE_PROOFRELAY_PROBE_ADDRESS || deployment.contractAddress;
+  const explicitBuild = import.meta.env.VITE_PROOFRELAY_PROBE_ADDRESS;
   const fromLocal = localStorage.getItem(PROBE_ADDRESS_KEY);
-  return validAddress(fromBuild) ? fromBuild : validAddress(fromLocal) ? fromLocal : '';
+  if (validAddress(explicitBuild)) return explicitBuild;
+  if (validAddress(fromLocal)) return fromLocal;
+  return validAddress(deployment.contractAddress) ? deployment.contractAddress : '';
 }
 export function configuredProductAddress() {
-  const fromBuild = import.meta.env.VITE_PROOFRELAY_ADDRESS || deployment.productAddress;
+  const explicitBuild = import.meta.env.VITE_PROOFRELAY_ADDRESS;
   const fromLocal = localStorage.getItem(PRODUCT_ADDRESS_KEY);
-  // The reviewed release address is authoritative. Local QA state must never
-  // make a fresh release silently fall back to an older deployment.
-  return validAddress(fromBuild) ? fromBuild : validAddress(fromLocal) ? fromLocal : '';
+  // A deployment made from this app is persisted locally so refresh/recovery
+  // keeps using v5. Build-time release configuration remains highest priority.
+  if (validAddress(explicitBuild)) return explicitBuild;
+  if (validAddress(fromLocal)) return fromLocal;
+  return validAddress(deployment.productAddress) ? deployment.productAddress : '';
 }
 export function saveProbeAddress(address) {
   if (!validAddress(address)) throw new Error('The network did not return a valid contract address.');
@@ -132,6 +136,15 @@ export async function adoptCorrection(address, proposalId, account) {
   });
 }
 
+export async function submitChallenge(address, recordId, revision, quote, account) {
+  return (await client(account)).writeContract({
+    address,
+    functionName: 'submit_challenge',
+    args: [recordId, revision, quote],
+    value: 0n,
+  });
+}
+
 export async function read(address, functionName, args = []) {
   if (!validAddress(address)) throw new Error('Deploy the source probe first.');
   return (await client()).readContract({ address, functionName, args });
@@ -158,7 +171,7 @@ export async function waitForFinality(hash) {
 
 export async function verifyProbe(address) {
   const config = await read(address, 'get_config');
-  if (config?.product !== 'ProofRelay Source Probe' || config?.rules_version !== 'probe-1') {
+  if (config?.product !== 'ProofRelay Source Probe' || config?.rules_version !== 'probe-2') {
     throw new Error('The address does not contain the expected ProofRelay source probe.');
   }
   return config;

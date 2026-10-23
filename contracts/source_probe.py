@@ -29,11 +29,7 @@ class SourceAccessProbe(gl.Contract):
         if not expected_text or len(expected_text) > 240:
             raise gl.vm.UserError("Enter a short passage to check")
 
-        url = (
-            "https://en.wikipedia.org/w/api.php?action=parse&oldid="
-            + revision_id
-            + "&prop=wikitext&section=0&format=json"
-        )
+        url = "https://en.wikipedia.org/w/rest.php/v1/revision/" + revision_id
 
         def fetch_snapshot_result() -> str:
             response = gl.nondet.web.get(url)
@@ -42,15 +38,17 @@ class SourceAccessProbe(gl.Contract):
 
             try:
                 payload = json.loads(response.body.decode("utf-8"))
-                parsed = payload.get("parse", {})
-                fetched_revision = str(parsed.get("revid", ""))
-                wikitext = parsed.get("wikitext", {}).get("*", "")
+                fetched_revision = str(payload.get("id", ""))
+                wikitext = payload.get("source", "")
             except (UnicodeDecodeError, json.JSONDecodeError, AttributeError, TypeError):
                 return "INVALID_RESPONSE"
 
             if fetched_revision != revision_id:
                 return "REVISION_MISMATCH"
-            if expected_text in wikitext:
+            if not isinstance(wikitext, str) or not wikitext:
+                return "INVALID_RESPONSE"
+            intro = wikitext.split("\n==", 1)[0]
+            if expected_text in intro:
                 return "MATCH"
             return "TEXT_MISSING"
 
@@ -62,7 +60,7 @@ class SourceAccessProbe(gl.Contract):
 
     @gl.public.view
     def get_config(self) -> typing.Any:
-        return {"product": "ProofRelay Source Probe", "rules_version": "probe-1"}
+        return {"product": "ProofRelay Source Probe", "rules_version": "probe-2"}
 
     @gl.public.view
     def get_last_result(self) -> typing.Any:
